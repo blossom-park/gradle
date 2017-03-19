@@ -227,7 +227,6 @@ class BuildProgressCrossVersionSpec extends ToolingApiSpecification {
                 connection.newBuild()
                     .withArguments('--init-script', initScript1.toString(), '--init-script', initScript2.toString())
                     .addProgressListener(events)
-                    .run()
         }
 
         then:
@@ -454,5 +453,4 @@ class BuildProgressCrossVersionSpec extends ToolingApiSpecification {
     MavenFileRepository getMavenRepo(String name = "repo") {
         return new MavenFileRepository(file(name))
     }
-
 }
