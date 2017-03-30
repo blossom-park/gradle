@@ -82,7 +82,7 @@ public class DefaultGradle extends AbstractPluginAware implements GradleInternal
         buildListenerBroadcast.add(new BuildAdapter() {
             @Override
             public void projectsLoaded(Gradle gradle) {
-                String displayName = "project " + rootProject.getIdentityPath().toString();
+                String displayName = "project :";
                 getBuildOperationExecutor().run("Configure " + displayName + " (initialization scripts)", new Action<BuildOperationContext>() {
                     @Override
                     public void execute(BuildOperationContext buildOperationContext) {
