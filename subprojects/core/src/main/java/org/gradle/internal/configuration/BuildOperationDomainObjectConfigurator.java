@@ -17,9 +17,11 @@
 package org.gradle.internal.configuration;
 
 import groovy.lang.Closure;
+import org.apache.commons.lang.StringUtils;
 import org.gradle.api.Action;
 import org.gradle.api.Nullable;
 import org.gradle.internal.operations.BuildOperationContext;
+import org.gradle.internal.progress.BuildOperationDetails;
 import org.gradle.internal.progress.BuildOperationExecutor;
 import org.gradle.internal.progress.HasBuildOperationContext;
 
@@ -69,12 +71,11 @@ public class BuildOperationDomainObjectConfigurator implements DomainObjectConfi
         return object;
     }
 
-    private String toDisplayName(HasBuildOperationContext objectWithIdentityPath, String callerContextInformation) {
-        String nameWithoutCallerContext =  "Configure " + objectWithIdentityPath.getBuildOperationDisplayName();
-        if (callerContextInformation == null) {
-            return nameWithoutCallerContext;
-        } else {
-            return nameWithoutCallerContext +" (" + callerContextInformation + ")";
+    private BuildOperationDetails toDisplayName(HasBuildOperationContext objectWithIdentityPath, String callerContextInformation) {
+        String nameWithContext = objectWithIdentityPath.getBuildOperationDisplayName();
+        if (callerContextInformation != null) {
+            nameWithContext += " (" + callerContextInformation + ")";
         }
+        return BuildOperationDetails.displayName("Configure " + nameWithContext).name(StringUtils.capitalize(nameWithContext)).build();
     }
 }
