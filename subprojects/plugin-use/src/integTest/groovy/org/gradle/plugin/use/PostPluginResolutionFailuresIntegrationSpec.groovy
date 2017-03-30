@@ -85,7 +85,7 @@ class PostPluginResolutionFailuresIntegrationSpec extends AbstractIntegrationSpe
         fails("verify")
         failure.assertThatDescription(startsWith("An exception occurred applying plugin request [id: 'org.my.myplugin', version: '1.0']"))
         failure.assertHasLineNumber(3)
-        failure.assertHasCause("throwing plugin")
+        failure.assertHasCause("java.lang.Exception: throwing plugin")
     }
 
     private void publishPlugin(String pluginId, String group, String artifact, String version) {

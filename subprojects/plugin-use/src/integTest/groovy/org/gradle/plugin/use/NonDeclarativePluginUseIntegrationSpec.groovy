@@ -309,7 +309,7 @@ class NonDeclarativePluginUseIntegrationSpec extends AbstractIntegrationSpec {
 
         and:
         failure.assertHasDescription("An exception occurred applying plugin request [id: 'org.myplugin', version: '1.0']")
-        failure.assertHasCause("throwing plugin")
+        failure.assertHasCause("java.lang.Exception: throwing plugin")
         failure.assertHasLineNumber(2)
     }
 
