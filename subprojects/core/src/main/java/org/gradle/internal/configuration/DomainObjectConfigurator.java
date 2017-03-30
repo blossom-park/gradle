@@ -21,7 +21,7 @@ import org.gradle.api.Action;
 import org.gradle.api.Nullable;
 
 /**
- * Configures a given domain object though an {@link groovy.lang.Closure} on {@link org.gradle.api.Action}
+ * Configures a given domain object with a {@link Closure} or an {@link Action}.
  */
 public interface DomainObjectConfigurator {
 
