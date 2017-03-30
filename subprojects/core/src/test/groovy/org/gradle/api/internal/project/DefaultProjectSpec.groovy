@@ -33,6 +33,7 @@ import org.gradle.api.internal.initialization.ClassLoaderScope
 import org.gradle.api.internal.tasks.TaskContainerInternal
 import org.gradle.api.internal.tasks.TaskResolver
 import org.gradle.groovy.scripts.ScriptSource
+import org.gradle.internal.configuration.DefaultDomainObjectConfigurator
 import org.gradle.internal.reflect.DirectInstantiator
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.internal.service.ServiceRegistry
@@ -47,7 +48,9 @@ class DefaultProjectSpec extends Specification {
 
     def "can create file collection configured with an Action"() {
         given:
-        def project = project('root', null, Stub(GradleInternal))
+        def build = Mock(GradleInternal)
+        build.domainObjectConfigurator >> new DefaultDomainObjectConfigurator()
+        def project = project('root', null, build)
         def action = { files -> files.builtBy('something') } as Action<ConfigurableFileCollection>
 
         when:
@@ -59,7 +62,9 @@ class DefaultProjectSpec extends Specification {
 
     def "can create file tree configured with an Action"() {
         given:
-        def project = project('root', null, Stub(GradleInternal))
+        def build = Mock(GradleInternal)
+        build.domainObjectConfigurator >> new DefaultDomainObjectConfigurator()
+        def project = project('root', null, build)
         def action = { fileTree -> fileTree.builtBy('something') } as Action<ConfigurableFileTree>
 
         when:
@@ -71,7 +76,9 @@ class DefaultProjectSpec extends Specification {
 
     def "can configure ant tasks with an Action"() {
         given:
-        def project = project('root', null, Stub(GradleInternal))
+        def build = Mock(GradleInternal)
+        build.domainObjectConfigurator >> new DefaultDomainObjectConfigurator()
+        def project = project('root', null, build)
         def antBuilder = Mock(AntBuilder)
         project.ant >> antBuilder
 
@@ -84,7 +91,9 @@ class DefaultProjectSpec extends Specification {
 
     def "can configure artifacts with an Action"() {
         given:
-        def project = project('root', null, Stub(GradleInternal))
+        def build = Mock(GradleInternal)
+        build.domainObjectConfigurator >> new DefaultDomainObjectConfigurator()
+        def project = project('root', null, build)
         def artifactHandler = Mock(ArtifactHandler)
         project.artifacts >> artifactHandler
 

@@ -20,6 +20,8 @@ import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.ProjectEvaluationListener
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.project.ProjectStateInternal
+import org.gradle.internal.configuration.BuildOperationDomainObjectConfigurator
+import org.gradle.internal.configuration.DefaultDomainObjectConfigurator
 import org.gradle.internal.progress.TestBuildOperationExecutor
 import org.gradle.util.Path
 import spock.lang.Specification
@@ -29,13 +31,15 @@ class LifecycleProjectEvaluatorTest extends Specification {
     private listener = Mock(ProjectEvaluationListener)
     private delegate = Mock(ProjectEvaluator)
     private buildOperationExecutor = new TestBuildOperationExecutor()
-    private evaluator = new LifecycleProjectEvaluator(buildOperationExecutor, delegate)
+    private domainObjectConfigurator = new BuildOperationDomainObjectConfigurator(new DefaultDomainObjectConfigurator(), buildOperationExecutor)
+    private evaluator = new LifecycleProjectEvaluator(domainObjectConfigurator, delegate)
     private state = Mock(ProjectStateInternal)
 
     void setup() {
         project.getProjectEvaluationBroadcaster() >> listener
         project.displayName >> "<project>"
         project.identityPath >> Path.path(":project1")
+        project.buildOperationDisplayName >> "project :project1"
     }
 
     void "nothing happens if project was already configured"() {
