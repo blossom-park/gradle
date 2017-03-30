@@ -1085,7 +1085,7 @@ public class DefaultProject extends AbstractPluginAware implements ProjectIntern
 
     @Override
     public void allprojects(Closure configureClosure) {
-        configure(getAllprojects(), configureClosure,"allprojects configuration block");
+        configure(getAllprojects(), configureClosure, "allprojects configuration block");
     }
 
     @Override
