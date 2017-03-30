@@ -72,6 +72,7 @@ import org.gradle.api.internal.attributes.DefaultMutableAttributeContainer;
 import org.gradle.api.internal.attributes.ImmutableAttributes;
 import org.gradle.api.internal.attributes.ImmutableAttributesFactory;
 import org.gradle.api.internal.file.AbstractFileCollection;
+import org.gradle.api.internal.file.BuildOperationFileCollection;
 import org.gradle.api.internal.file.FileCollectionFactory;
 import org.gradle.api.internal.file.FileCollectionInternal;
 import org.gradle.api.internal.file.FileSystemSubset;
@@ -211,7 +212,7 @@ public class DefaultConfiguration extends AbstractFileCollection implements Conf
         this.moduleIdentifierFactory = moduleIdentifierFactory;
         this.attributesFactory = attributesFactory;
         this.configurationAttributes = new DefaultMutableAttributeContainer(attributesFactory);
-        this.intrinsicFiles = new ConfigurationFileCollection(Specs.<Dependency>satisfyAll());
+        this.intrinsicFiles = new BuildOperationFileCollection(new ConfigurationFileCollection(Specs.<Dependency>satisfyAll()), "Resolve artifacts " + getPath(), buildOperationExecutor);
 
         DefaultDomainObjectSet<Dependency> ownDependencies = new DefaultDomainObjectSet<Dependency>(Dependency.class);
         ownDependencies.beforeChange(validateMutationType(this, MutationType.DEPENDENCIES));
