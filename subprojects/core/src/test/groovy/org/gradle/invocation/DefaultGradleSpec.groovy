@@ -30,6 +30,8 @@ import org.gradle.api.internal.tasks.TaskContainerInternal
 import org.gradle.execution.TaskGraphExecuter
 import org.gradle.groovy.scripts.ScriptSource
 import org.gradle.initialization.ClassLoaderScopeRegistry
+import org.gradle.internal.configuration.DefaultDomainObjectConfigurator
+import org.gradle.internal.configuration.DomainObjectConfigurator
 import org.gradle.internal.event.DefaultListenerManager
 import org.gradle.internal.event.ListenerManager
 import org.gradle.internal.installation.CurrentGradleInstallation
@@ -47,6 +49,7 @@ class DefaultGradleSpec extends Specification {
     AsmBackedClassGenerator classGenerator = new AsmBackedClassGenerator()
     ServiceRegistryFactory serviceRegistryFactory = Stub(ServiceRegistryFactory)
     ListenerManager listenerManager = Spy(DefaultListenerManager)
+    DomainObjectConfigurator domainObjectConfigurator = new DefaultDomainObjectConfigurator()
 
     StartParameter parameter = new StartParameter()
     CurrentGradleInstallation currentGradleInstallation = Mock(CurrentGradleInstallation)
@@ -65,6 +68,7 @@ class DefaultGradleSpec extends Specification {
         _ * serviceRegistry.get(Instantiator) >> Mock(Instantiator)
         _ * serviceRegistry.get(ListenerManager) >> listenerManager
         _ * serviceRegistry.get(CurrentGradleInstallation) >> currentGradleInstallation
+        _ * serviceRegistry.get(DomainObjectConfigurator) >> domainObjectConfigurator
 
         gradle = classGenerator.newInstance(DefaultGradle.class, null, parameter, serviceRegistryFactory)
     }

@@ -62,6 +62,8 @@ import org.gradle.groovy.scripts.EmptyScript
 import org.gradle.groovy.scripts.ScriptSource
 import org.gradle.initialization.ProjectAccessListener
 import org.gradle.internal.Factory
+import org.gradle.internal.configuration.DefaultDomainObjectConfigurator
+import org.gradle.internal.configuration.DomainObjectConfigurator
 import org.gradle.internal.logging.LoggingManagerInternal
 import org.gradle.internal.metaobject.BeanDynamicObject
 import org.gradle.internal.reflect.Instantiator
@@ -135,6 +137,7 @@ class DefaultProjectTest {
     ManagedProxyFactory managedProxyFactory = context.mock(ManagedProxyFactory.class)
     AntLoggingAdapter antLoggingAdapter = context.mock(AntLoggingAdapter.class)
     AttributesSchema attributesSchema = context.mock(AttributesSchema)
+    DomainObjectConfigurator domainObjectConfigurator = new DefaultDomainObjectConfigurator()
 
     ClassLoaderScope baseClassLoaderScope = new RootClassLoaderScope(getClass().classLoader, getClass().classLoader, new DummyClassLoaderCache())
     ClassLoaderScope rootProjectClassLoaderScope = baseClassLoaderScope.createChild("root-project")
@@ -217,8 +220,11 @@ class DefaultProjectTest {
             will(returnValue(null))
 
             allowing(build).getIdentityPath()
+            allowing(build).findIdentityPath()
             will(returnValue(Path.ROOT))
             allowing(attributesSchema).attribute(withParam(notNullValue()), withParam(notNullValue()));
+
+            allowing(build).getDomainObjectConfigurator(); will(returnValue(domainObjectConfigurator))
         }
 
         AsmBackedClassGenerator classGenerator = new AsmBackedClassGenerator()
