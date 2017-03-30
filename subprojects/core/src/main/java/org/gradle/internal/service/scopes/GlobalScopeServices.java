@@ -73,6 +73,9 @@ import org.gradle.internal.classpath.ClassPath;
 import org.gradle.internal.classpath.DefaultClassPath;
 import org.gradle.internal.concurrent.DefaultExecutorFactory;
 import org.gradle.internal.concurrent.ExecutorFactory;
+import org.gradle.internal.configuration.BuildOperationDomainObjectConfigurator;
+import org.gradle.internal.configuration.DefaultDomainObjectConfigurator;
+import org.gradle.internal.configuration.DomainObjectConfigurator;
 import org.gradle.internal.environment.GradleBuildEnvironment;
 import org.gradle.internal.event.DefaultListenerManager;
 import org.gradle.internal.event.ListenerManager;
@@ -168,6 +171,11 @@ public class GlobalScopeServices {
 
     BuildOperationService createBuildOperationService(ListenerManager listenerManager) {
         return new DefaultBuildOperationService(listenerManager);
+    }
+
+    DomainObjectConfigurator createDomainObjectConfigurator(BuildOperationExecutor buildOperationExecutor) {
+        DomainObjectConfigurator domainObjectConfigurator = new DefaultDomainObjectConfigurator();
+        return new BuildOperationDomainObjectConfigurator(domainObjectConfigurator, buildOperationExecutor);
     }
 
     TemporaryFileProvider createTemporaryFileProvider() {

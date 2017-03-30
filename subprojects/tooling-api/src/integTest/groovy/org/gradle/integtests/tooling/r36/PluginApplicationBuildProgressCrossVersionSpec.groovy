@@ -232,7 +232,7 @@ class PluginApplicationBuildProgressCrossVersionSpec extends ToolingApiSpecifica
         def javaBase = events.operation("Apply plugin 'org.gradle.api.plugins.JavaBasePlugin'")
         def base = events.operation("Apply plugin 'org.gradle.api.plugins.BasePlugin'")
 
-        java.parent == rootOperation.child("Configure project : (initialization scripts)").child("Configure project : (nested in allprojects configuration block)")
+        java.parent == rootOperation.child("Configure project : (initialization scripts)").child("Configure project : (allprojects configuration block)")
         javaBase.parent == java
         base.parent == javaBase
     }
@@ -294,7 +294,7 @@ class PluginApplicationBuildProgressCrossVersionSpec extends ToolingApiSpecifica
         events.operation("Configure project :a").failed
     }
 
-    def "generates events for plugin application where project configuration is nested in allprojects closure"() {
+    def "generates events for plugin application where project configuration is allprojects closure"() {
         given:
         def events = ProgressEvents.create()
         settingsFile << """
@@ -329,12 +329,12 @@ class PluginApplicationBuildProgressCrossVersionSpec extends ToolingApiSpecifica
         configureB.child("Apply plugin 'org.gradle.help-tasks'")
         configureB.children("Apply plugin'org.gradle.java'").empty
 
-        applyBuildGradle.child("Configure project : (nested in allprojects configuration block)").child("Apply plugin 'org.gradle.java'")
-        applyBuildGradle.child("Configure project :a (nested in allprojects configuration block)").child("Apply plugin 'org.gradle.java'")
-        applyBuildGradle.child("Configure project :b (nested in allprojects configuration block)").child("Apply plugin 'org.gradle.java'")
+        applyBuildGradle.child("Configure project : (allprojects configuration block)").child("Apply plugin 'org.gradle.java'")
+        applyBuildGradle.child("Configure project :a (allprojects configuration block)").child("Apply plugin 'org.gradle.java'")
+        applyBuildGradle.child("Configure project :b (allprojects configuration block)").child("Apply plugin 'org.gradle.java'")
     }
 
-    def "generates events for plugin application where project configuration is nested in subprojects closure"() {
+    def "generates events for plugin application where project configuration is subprojects closure"() {
         given:
         def events = ProgressEvents.create()
         settingsFile << """
@@ -356,11 +356,11 @@ class PluginApplicationBuildProgressCrossVersionSpec extends ToolingApiSpecifica
         def applyBuildGradle = events.operation("Apply build file '${buildFile.absolutePath}' to root project 'multi'")
 
         applyBuildGradle.children.size() == 2
-        applyBuildGradle.child("Configure project :a (nested in subprojects configuration block)").child("Apply plugin 'org.gradle.java'")
-        applyBuildGradle.child("Configure project :b (nested in subprojects configuration block)").child("Apply plugin 'org.gradle.java'")
+        applyBuildGradle.child("Configure project :a (subprojects configuration block)").child("Apply plugin 'org.gradle.java'")
+        applyBuildGradle.child("Configure project :b (subprojects configuration block)").child("Apply plugin 'org.gradle.java'")
     }
 
-    def "generates events for plugin application where project configuration is nested in project closure"() {
+    def "generates events for plugin application where project configuration is project closure"() {
         given:
         def events = ProgressEvents.create()
         settingsFile << """
@@ -382,10 +382,10 @@ class PluginApplicationBuildProgressCrossVersionSpec extends ToolingApiSpecifica
         def applyBuildGradle = events.operation("Apply build file '${buildFile.absolutePath}' to root project 'multi'")
 
         applyBuildGradle.children.size() == 1
-        applyBuildGradle.child("Configure project :a (nested in project configuration block)").child("Apply plugin 'org.gradle.java'")
+        applyBuildGradle.child("Configure project :a (project configuration block)").child("Apply plugin 'org.gradle.java'")
     }
 
-    def "generates events for plugin application where project configuration is nested in project configuration action"() {
+    def "generates events for plugin application where project configuration is project configuration action"() {
         given:
         def events = ProgressEvents.create()
         settingsFile << """
@@ -407,7 +407,7 @@ class PluginApplicationBuildProgressCrossVersionSpec extends ToolingApiSpecifica
         def applyBuildGradle = events.operation("Apply build file '${buildFile.absolutePath}' to root project 'multi'")
 
         applyBuildGradle.children.size() == 1
-        applyBuildGradle.child("Configure project :b (nested in project configuration block)").child("Apply plugin 'org.gradle.java'")
+        applyBuildGradle.child("Configure project :b (project configuration block)").child("Apply plugin 'org.gradle.java'")
     }
 
     def "generates plugin application events for buildSrc"() {
@@ -445,9 +445,9 @@ class PluginApplicationBuildProgressCrossVersionSpec extends ToolingApiSpecifica
         configureBuildSrcB.children("Apply plugin 'org.gradle.java'").empty
 
         groovyPlugin.child("Apply plugin 'org.gradle.api.plugins.JavaPlugin'") //buildSrc root automatically applies Java plugin
-        applyBuildSrcBuildGradle.child("Configure project :buildSrc (nested in allprojects configuration block)").children.empty
-        applyBuildSrcBuildGradle.child("Configure project :buildSrc:a (nested in allprojects configuration block)").child("Apply plugin 'org.gradle.java'")
-        applyBuildSrcBuildGradle.child("Configure project :buildSrc:b (nested in allprojects configuration block)").child("Apply plugin 'org.gradle.java'")
+        applyBuildSrcBuildGradle.child("Configure project :buildSrc (allprojects configuration block)").children.empty
+        applyBuildSrcBuildGradle.child("Configure project :buildSrc:a (allprojects configuration block)").child("Apply plugin 'org.gradle.java'")
+        applyBuildSrcBuildGradle.child("Configure project :buildSrc:b (allprojects configuration block)").child("Apply plugin 'org.gradle.java'")
     }
 
     private buildSrc() {

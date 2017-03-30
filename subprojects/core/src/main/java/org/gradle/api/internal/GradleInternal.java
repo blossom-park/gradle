@@ -23,7 +23,7 @@ import org.gradle.api.internal.initialization.ClassLoaderScope;
 import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.execution.TaskGraphExecuter;
-import org.gradle.internal.progress.BuildOperationExecutor;
+import org.gradle.internal.configuration.DomainObjectConfigurator;
 import org.gradle.internal.service.ServiceRegistry;
 import org.gradle.internal.service.scopes.ServiceRegistryFactory;
 import org.gradle.util.Path;
@@ -99,5 +99,5 @@ public interface GradleInternal extends Gradle {
 
     void setIdentityPath(Path path);
 
-    BuildOperationExecutor getBuildOperationExecutor();
+    DomainObjectConfigurator getDomainObjectConfigurator();
 }

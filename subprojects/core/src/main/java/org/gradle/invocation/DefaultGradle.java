@@ -41,12 +41,11 @@ import org.gradle.configuration.ScriptPluginFactory;
 import org.gradle.execution.TaskGraphExecuter;
 import org.gradle.initialization.ClassLoaderScopeRegistry;
 import org.gradle.internal.MutableActionSet;
+import org.gradle.internal.configuration.DomainObjectConfigurator;
 import org.gradle.internal.event.ListenerBroadcast;
 import org.gradle.internal.event.ListenerManager;
 import org.gradle.internal.installation.CurrentGradleInstallation;
 import org.gradle.internal.installation.GradleInstallation;
-import org.gradle.internal.operations.BuildOperationContext;
-import org.gradle.internal.progress.BuildOperationExecutor;
 import org.gradle.internal.service.ServiceRegistry;
 import org.gradle.internal.service.scopes.ServiceRegistryFactory;
 import org.gradle.listener.ClosureBackedMethodInvocationDispatch;
@@ -82,13 +81,7 @@ public class DefaultGradle extends AbstractPluginAware implements GradleInternal
         buildListenerBroadcast.add(new BuildAdapter() {
             @Override
             public void projectsLoaded(Gradle gradle) {
-                String displayName = "project :";
-                getBuildOperationExecutor().run("Configure " + displayName + " (initialization scripts)", new Action<BuildOperationContext>() {
-                    @Override
-                    public void execute(BuildOperationContext buildOperationContext) {
-                        rootProjectActions.execute(rootProject);
-                    }
-                });
+                getDomainObjectConfigurator().configure(rootProject, rootProjectActions, "initialization scripts");
                 rootProjectActions = null;
             }
         });
@@ -400,7 +393,7 @@ public class DefaultGradle extends AbstractPluginAware implements GradleInternal
     }
 
     @Inject
-    public BuildOperationExecutor getBuildOperationExecutor() {
+    public DomainObjectConfigurator getDomainObjectConfigurator() {
         throw new UnsupportedOperationException();
     }
 }

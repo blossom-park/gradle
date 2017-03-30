@@ -73,7 +73,6 @@ import org.gradle.configuration.project.ProjectConfigurationActionContainer;
 import org.gradle.configuration.project.ProjectEvaluator;
 import org.gradle.groovy.scripts.ScriptSource;
 import org.gradle.internal.Actions;
-import org.gradle.internal.Cast;
 import org.gradle.internal.Factories;
 import org.gradle.internal.Factory;
 import org.gradle.internal.event.ListenerBroadcast;
@@ -81,7 +80,6 @@ import org.gradle.internal.logging.LoggingManagerInternal;
 import org.gradle.internal.logging.StandardOutputCapture;
 import org.gradle.internal.metaobject.BeanDynamicObject;
 import org.gradle.internal.metaobject.DynamicObject;
-import org.gradle.internal.operations.BuildOperationContext;
 import org.gradle.internal.reflect.Instantiator;
 import org.gradle.internal.service.ServiceRegistry;
 import org.gradle.internal.service.scopes.ServiceRegistryFactory;
@@ -528,6 +526,14 @@ public class DefaultProject extends AbstractPluginAware implements ProjectIntern
     }
 
     @Override
+    public String getBuildOperationDisplayName() {
+        if (parent == null && gradle.findIdentityPath() == null) {
+            return "project " + getName();
+        }
+        return "project " + getIdentityPath().toString();
+    }
+
+    @Override
     public int getDepth() {
         return depth;
     }
@@ -608,18 +614,25 @@ public class DefaultProject extends AbstractPluginAware implements ProjectIntern
 
     @Override
     public void subprojects(Action<? super Project> action) {
-        configureProjects(getSubprojects(), action, "subprojects configuration block");
+        configure(getSubprojects(), action, "subprojects configuration block");
     }
 
     @Override
     public void allprojects(Action<? super Project> action) {
-        configureProjects(getAllprojects(), action, "allprojects configuration block");
+        configure(getAllprojects(), action, "allprojects configuration block");
     }
 
     @Override
     public <T> Iterable<T> configure(Iterable<T> objects, Action<? super T> configureAction) {
         for (T object : objects) {
-            configureAction.execute(object);
+            gradle.getDomainObjectConfigurator().configure(object, configureAction, null);
+        }
+        return objects;
+    }
+
+    private <T> Iterable<T> configure(Iterable<T> objects, Action<? super T> configureAction, String callerContextInformation) {
+        for (T object : objects) {
+            gradle.getDomainObjectConfigurator().configure(object, configureAction, callerContextInformation);
         }
         return objects;
     }
@@ -818,13 +831,13 @@ public class DefaultProject extends AbstractPluginAware implements ProjectIntern
 
     @Override
     public ConfigurableFileCollection files(Object paths, Closure closure) {
-        return ConfigureUtil.configure(closure, files(paths));
+        return gradle.getDomainObjectConfigurator().configure(files(paths), closure, null);
     }
 
     @Override
     public ConfigurableFileCollection files(Object paths, Action<? super ConfigurableFileCollection> configureAction) {
         ConfigurableFileCollection files = files(paths);
-        configureAction.execute(files);
+        gradle.getDomainObjectConfigurator().configure(files, configureAction, null);
         return files;
     }
 
@@ -835,13 +848,13 @@ public class DefaultProject extends AbstractPluginAware implements ProjectIntern
 
     @Override
     public ConfigurableFileTree fileTree(Object baseDir, Closure closure) {
-        return ConfigureUtil.configure(closure, fileTree(baseDir));
+        return gradle.getDomainObjectConfigurator().configure(fileTree(baseDir), closure, null);
     }
 
     @Override
     public ConfigurableFileTree fileTree(Object baseDir, Action<? super ConfigurableFileTree> configureAction) {
         ConfigurableFileTree fileTree = fileTree(baseDir);
-        configureAction.execute(fileTree);
+        gradle.getDomainObjectConfigurator().configure(fileTree, configureAction, null);
         return fileTree;
     }
 
@@ -1055,68 +1068,52 @@ public class DefaultProject extends AbstractPluginAware implements ProjectIntern
 
     @Override
     public AntBuilder ant(Closure configureClosure) {
-        return ConfigureUtil.configure(configureClosure, getAnt());
+        return gradle.getDomainObjectConfigurator().configure(getAnt(), configureClosure, null);
     }
 
     @Override
     public AntBuilder ant(Action<? super AntBuilder> configureAction) {
         AntBuilder ant = getAnt();
-        configureAction.execute(ant);
+        gradle.getDomainObjectConfigurator().configure(ant, configureAction, null);
         return ant;
     }
 
     @Override
     public void subprojects(Closure configureClosure) {
-        configureProjects(getSubprojects(), configureClosure, "subprojects configuration block");
+        configure(getSubprojects(), configureClosure, "subprojects configuration block");
     }
 
     @Override
     public void allprojects(Closure configureClosure) {
-        configureProjects(getAllprojects(), configureClosure, "allprojects configuration block");
+        configure(getAllprojects(), configureClosure,"allprojects configuration block");
     }
 
     @Override
     public Project project(String path, Closure configureClosure) {
-        return configureProject(project(path), configureClosure, "project configuration block");
+        return gradle.getDomainObjectConfigurator().configure(project(path), configureClosure, "project configuration block");
     }
 
     @Override
     public Project project(String path, Action<? super Project> configureAction) {
-        return configureProject(project(path), configureAction, "project configuration block");
-    }
-
-    private Project configureProject(final Project project, final Object configureClosureOrAction, String provider) {
-        String displayName = "project " + ((ProjectInternal) project).getIdentityPath().toString();
-        gradle.getBuildOperationExecutor().run("Configure " + displayName + " (nested in " + provider + ")", new Action<BuildOperationContext>() {
-            @Override
-            public void execute(BuildOperationContext buildOperationContext) {
-                if (configureClosureOrAction instanceof Closure) {
-                    configure(project, (Closure) configureClosureOrAction);
-                } else if (configureClosureOrAction instanceof Action) {
-                    Action<? super Project> action = Cast.uncheckedCast(configureClosureOrAction);
-                    Actions.with(project, action);
-                }
-            }
-        });
-        return project;
-    }
-
-    private Iterable<Project> configureProjects(Iterable<Project> projects, Object configureClosureOrAction, String provider) {
-        for (Project project : projects) {
-            configureProject(project, configureClosureOrAction, provider);
-        }
-        return projects;
+        return gradle.getDomainObjectConfigurator().configure(project(path), configureAction, "project configuration block");
     }
 
     @Override
     public Object configure(Object object, Closure configureClosure) {
-        return ConfigureUtil.configure(configureClosure, object);
+        return gradle.getDomainObjectConfigurator().configure(object, configureClosure, null);
     }
 
     @Override
     public Iterable<?> configure(Iterable<?> objects, Closure configureClosure) {
         for (Object object : objects) {
             configure(object, configureClosure);
+        }
+        return objects;
+    }
+
+    private <T> Iterable<T> configure(Iterable<T> objects, Closure configureClosure, String callerContextInformation) {
+        for (T object : objects) {
+            gradle.getDomainObjectConfigurator().configure(object, configureClosure, callerContextInformation);
         }
         return objects;
     }
@@ -1128,27 +1125,27 @@ public class DefaultProject extends AbstractPluginAware implements ProjectIntern
 
     @Override
     public void repositories(Closure configureClosure) {
-        ConfigureUtil.configure(configureClosure, getRepositories());
+        gradle.getDomainObjectConfigurator().configure(getRepositories(), configureClosure, null);
     }
 
     @Override
     public void dependencies(Closure configureClosure) {
-        ConfigureUtil.configure(configureClosure, getDependencies());
+        gradle.getDomainObjectConfigurator().configure(getDependencies(), configureClosure, null);
     }
 
     @Override
     public void artifacts(Closure configureClosure) {
-        ConfigureUtil.configure(configureClosure, getArtifacts());
+        gradle.getDomainObjectConfigurator().configure(getArtifacts(), configureClosure, null);
     }
 
     @Override
     public void artifacts(Action<? super ArtifactHandler> configureAction) {
-        configureAction.execute(getArtifacts());
+        gradle.getDomainObjectConfigurator().configure(getArtifacts(), configureAction, null);
     }
 
     @Override
     public void buildscript(Closure configureClosure) {
-        ConfigureUtil.configure(configureClosure, getBuildscript());
+        gradle.getDomainObjectConfigurator().configure(getBuildscript(), configureClosure, null);
     }
 
     @Override
