@@ -120,7 +120,12 @@ public class DefaultGradle extends AbstractPluginAware implements GradleInternal
                     // Not known yet
                     return null;
                 }
-                identityPath = parent.getIdentityPath().child(rootProject.getName());
+                Path parentIdentityPath = parent.findIdentityPath();
+                if (parentIdentityPath == null) {
+                    // Not known yet
+                    return null;
+                }
+                this.identityPath = parentIdentityPath.child(rootProject.getName());
             }
         }
         return identityPath;
