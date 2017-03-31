@@ -22,9 +22,11 @@ import org.gradle.integtests.tooling.fixture.ToolingApiVersion
 import org.gradle.tooling.ProjectConnection
 import org.gradle.tooling.UnsupportedVersionException
 import org.gradle.tooling.model.build.BuildEnvironment
+import org.gradle.util.MustFixForV4
 
 class BuildEnvironmentCrossVersionSpec extends ToolingApiSpecification {
 
+    @MustFixForV4
     @ToolingApiVersion(">=3.5")
     @TargetGradleVersion(">=3.5")
     def "provide setEnvironmentVariables on LongRunningOperation"() {

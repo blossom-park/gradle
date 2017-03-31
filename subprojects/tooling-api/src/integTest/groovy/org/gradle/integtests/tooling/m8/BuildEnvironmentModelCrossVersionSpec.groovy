@@ -20,9 +20,11 @@ import org.gradle.integtests.tooling.fixture.TargetGradleVersion
 import org.gradle.integtests.tooling.fixture.ToolingApiSpecification
 import org.gradle.tooling.model.GradleProject
 import org.gradle.tooling.model.build.BuildEnvironment
+import org.gradle.util.MustFixForV4
 
 class BuildEnvironmentModelCrossVersionSpec extends ToolingApiSpecification {
 
+    @MustFixForV4
     def "informs about build environment"() {
         when:
         BuildEnvironment model = withConnection { it.getModel(BuildEnvironment.class) }

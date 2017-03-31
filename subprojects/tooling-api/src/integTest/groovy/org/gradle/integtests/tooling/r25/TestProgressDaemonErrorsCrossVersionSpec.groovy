@@ -23,8 +23,10 @@ import org.gradle.test.fixtures.server.http.CyclicBarrierHttpServer
 import org.gradle.tooling.ProjectConnection
 import org.gradle.tooling.events.OperationType
 import org.gradle.tooling.events.ProgressEvent
+import org.gradle.util.MustFixForV4
 import org.junit.Rule
 
+@MustFixForV4
 class TestProgressDaemonErrorsCrossVersionSpec extends ToolingApiSpecification {
     @Rule CyclicBarrierHttpServer server = new CyclicBarrierHttpServer()
     boolean killed = false

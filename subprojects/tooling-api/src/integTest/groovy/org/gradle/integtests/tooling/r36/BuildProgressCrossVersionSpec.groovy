@@ -26,6 +26,7 @@ import org.gradle.test.fixtures.maven.MavenFileRepository
 import org.gradle.test.fixtures.server.http.MavenHttpRepository
 import org.gradle.test.fixtures.server.http.RepositoryHttpServer
 import org.gradle.tooling.ProjectConnection
+import org.gradle.util.MustFixForV4
 import org.gradle.util.Requires
 import org.junit.Rule
 import spock.lang.Issue
@@ -138,6 +139,7 @@ class BuildProgressCrossVersionSpec extends ToolingApiSpecification {
     }
 
     @LeaksFileHandles
+    @MustFixForV4
     def "generates events for downloading artifacts"() {
         given:
         toolingApi.requireIsolatedUserHome()
@@ -376,6 +378,7 @@ class BuildProgressCrossVersionSpec extends ToolingApiSpecification {
 
     @Issue("gradle/gradle#1641")
     @LeaksFileHandles
+    @MustFixForV4
     def "generates download events during maven publish"() {
         given:
         toolingApi.requireIsolatedUserHome()
