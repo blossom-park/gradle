@@ -29,19 +29,19 @@ public class ImperativeOnlyPluginApplicator<T> implements PluginApplicator {
         this.target = target;
     }
 
-    public void applyImperative(@Nullable String pluginId, Plugin<?> plugin) {
+    public void applyImperative(@Nullable String pluginId, Plugin<?> plugin, @Nullable String version) {
         // TODO validate that the plugin accepts this kind of argument
         Plugin<T> cast = uncheckedCast(plugin);
         cast.apply(target);
     }
 
-    public void applyRules(@Nullable String pluginId, Class<?> clazz) {
+    public void applyRules(@Nullable String pluginId, Class<?> clazz, @Nullable String version) {
         String message = String.format("Cannot apply model rules of plugin '%s' as the target '%s' is not model rule aware", clazz.getName(), target.toString());
         throw new UnsupportedOperationException(message);
     }
 
-    public void applyImperativeRulesHybrid(@Nullable String pluginId, Plugin<?> plugin) {
-        applyRules(pluginId, plugin.getClass());
+    public void applyImperativeRulesHybrid(@Nullable String pluginId, Plugin<?> plugin, @Nullable String version) {
+        applyRules(pluginId, plugin.getClass(), version);
     }
 
 }

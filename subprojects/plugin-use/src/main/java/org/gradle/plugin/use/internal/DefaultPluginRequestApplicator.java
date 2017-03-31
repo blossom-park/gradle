@@ -169,7 +169,7 @@ public class DefaultPluginRequestApplicator implements PluginRequestApplicator {
             applyPlugin(request, id, new Runnable() {
                 public void run() {
                     if (request.isApply()) {
-                        target.apply(id.toString());
+                        target.apply(id.toString(), request.getVersion());
                     }
                 }
             });

@@ -39,11 +39,11 @@ public class RuleBasedPluginApplicator<T extends ModelRegistryScope & PluginAwar
         this.imperativeApplicator = new ImperativeOnlyPluginApplicator<T>(target);
     }
 
-    public void applyImperative(@Nullable String pluginId, Plugin<?> plugin) {
-        imperativeApplicator.applyImperative(pluginId, plugin);
+    public void applyImperative(@Nullable String pluginId, Plugin<?> plugin, @Nullable String version) {
+        imperativeApplicator.applyImperative(pluginId, plugin, version);
     }
 
-    public void applyRules(@Nullable String pluginId, Class<?> clazz) {
+    public void applyRules(@Nullable String pluginId, Class<?> clazz, @Nullable String version) {
         ModelRegistry modelRegistry = target.getModelRegistry();
         Iterable<Class<? extends RuleSource>> declaredSources = ruleDetector.getDeclaredSources(clazz);
         for (Class<? extends RuleSource> ruleSource : declaredSources) {
@@ -55,9 +55,9 @@ public class RuleBasedPluginApplicator<T extends ModelRegistryScope & PluginAwar
         }
     }
 
-    public void applyImperativeRulesHybrid(@Nullable String pluginId, Plugin<?> plugin) {
-        applyImperative(pluginId, plugin);
-        applyRules(pluginId, plugin.getClass());
+    public void applyImperativeRulesHybrid(@Nullable String pluginId, Plugin<?> plugin, @Nullable String version) {
+        applyImperative(pluginId, plugin, version);
+        applyRules(pluginId, plugin.getClass(), version);
     }
 
 }

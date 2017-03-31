@@ -23,10 +23,10 @@ public interface PluginApplicator {
 
     // Implementations should not wrap exceptions, this is done in DefaultObjectConfigurationAction
 
-    void applyImperative(@Nullable String pluginId, Plugin<?> plugin);
+    void applyImperative(@Nullable String pluginId, Plugin<?> plugin, @Nullable String version);
 
-    void applyRules(@Nullable String pluginId, Class<?> clazz);
+    void applyRules(@Nullable String pluginId, Class<?> clazz, @Nullable String version);
 
-    void applyImperativeRulesHybrid(@Nullable String pluginId, Plugin<?> plugin);
+    void applyImperativeRulesHybrid(@Nullable String pluginId, Plugin<?> plugin, @Nullable String version);
 
 }

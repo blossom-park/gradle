@@ -105,12 +105,17 @@ public class DefaultPluginManager implements PluginManagerInternal {
         doApply(plugin);
     }
 
+    @Override
     public void apply(String pluginId) {
+        apply(pluginId, null);
+    }
+
+    public void apply(String pluginId, @Nullable String version) {
         PluginImplementation<?> plugin = pluginRegistry.lookup(DefaultPluginId.unvalidated(pluginId));
         if (plugin == null) {
             throw new UnknownPluginException("Plugin with id '" + pluginId + "' not found.");
         }
-        doApply(plugin);
+        doApply(plugin, version);
     }
 
     public void apply(Class<?> type) {
@@ -118,6 +123,10 @@ public class DefaultPluginManager implements PluginManagerInternal {
     }
 
     private void doApply(PluginImplementation<?> plugin) {
+        doApply(plugin, null);
+    }
+
+    private void doApply(PluginImplementation<?> plugin, @Nullable String version) {
         PluginId pluginId = plugin.getPluginId();
         String pluginIdStr = pluginId == null ? null : pluginId.toString();
         Class<?> pluginClass = plugin.asClass();
@@ -135,16 +144,16 @@ public class DefaultPluginManager implements PluginManagerInternal {
                         instances.put(pluginClass, pluginInstance);
 
                         if (plugin.isHasRules()) {
-                            applicator.applyImperativeRulesHybrid(pluginIdStr, pluginInstance);
+                            applicator.applyImperativeRulesHybrid(pluginIdStr, pluginInstance, version);
                         } else {
-                            applicator.applyImperative(pluginIdStr, pluginInstance);
+                            applicator.applyImperative(pluginIdStr, pluginInstance, version);
                         }
 
                         // Important not to add until after it has been applied as there can be
                         // plugins.withType() callbacks waiting to build on what the plugin did
                         pluginContainer.add(pluginInstance);
                     } else {
-                        applicator.applyRules(pluginIdStr, pluginClass);
+                        applicator.applyRules(pluginIdStr, pluginClass, version);
                     }
 
                     adder.run();

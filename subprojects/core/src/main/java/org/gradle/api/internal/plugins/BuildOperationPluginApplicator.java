@@ -38,29 +38,29 @@ public class BuildOperationPluginApplicator implements PluginApplicator {
         this.buildOperationExecutor = buildOperationExecutor;
     }
 
-    public void applyImperative(@Nullable final String pluginId, final Plugin<?> plugin) {
+    public void applyImperative(@Nullable final String pluginId, final Plugin<?> plugin, @Nullable final String version) {
         buildOperationExecutor.run(toBuildOperationDetails(pluginId, plugin.getClass(), version, "imperative"), new Action<BuildOperationContext>() {
             @Override
             public void execute(BuildOperationContext buildOperationContext) {
-                decorated.applyImperative(pluginId, plugin);
+                decorated.applyImperative(pluginId, plugin, version);
             }
         });
     }
 
-    public void applyRules(@Nullable final String pluginId, final Class<?> clazz) {
+    public void applyRules(@Nullable final String pluginId, final Class<?> clazz, @Nullable final String version) {
         buildOperationExecutor.run(toBuildOperationDetails(pluginId, clazz, version, "rules"), new Action<BuildOperationContext>() {
             @Override
             public void execute(BuildOperationContext buildOperationContext) {
-                decorated.applyRules(pluginId, clazz);
+                decorated.applyRules(pluginId, clazz, version);
             }
         });
     }
 
-    public void applyImperativeRulesHybrid(@Nullable final String pluginId, final Plugin<?> plugin) {
+    public void applyImperativeRulesHybrid(@Nullable final String pluginId, final Plugin<?> plugin, @Nullable final String version) {
         buildOperationExecutor.run(toBuildOperationDetails(pluginId, plugin.getClass(), version, "hybrid"), new Action<BuildOperationContext>() {
             @Override
             public void execute(BuildOperationContext buildOperationContext) {
-                decorated.applyImperativeRulesHybrid(pluginId, plugin);
+                decorated.applyImperativeRulesHybrid(pluginId, plugin, version);
             }
         });
     }

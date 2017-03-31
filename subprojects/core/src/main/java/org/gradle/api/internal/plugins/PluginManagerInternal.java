@@ -17,6 +17,7 @@
 package org.gradle.api.internal.plugins;
 
 import org.gradle.api.DomainObjectSet;
+import org.gradle.api.Nullable;
 import org.gradle.api.Plugin;
 import org.gradle.api.plugins.AppliedPlugin;
 import org.gradle.api.plugins.PluginContainer;
@@ -33,6 +34,13 @@ public interface PluginManagerInternal extends PluginManager {
     PluginContainer getPluginContainer();
 
     DomainObjectSet<PluginWithId> pluginsForId(String id);
+
+    /**
+     * Version of {@link #apply(String)} that also takes th plugin version
+     * for informational purpose
+     * (it is not considered during actual plugin application)
+     */
+    void apply(String s, @Nullable String version);
 
     class PluginWithId {
         final PluginId id;

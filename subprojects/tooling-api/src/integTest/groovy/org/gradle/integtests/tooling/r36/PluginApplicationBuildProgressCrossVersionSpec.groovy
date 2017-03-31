@@ -111,7 +111,7 @@ class PluginApplicationBuildProgressCrossVersionSpec extends ToolingApiSpecifica
         def applyBuildGradle = events.operation("Apply build file '${buildFile.absolutePath}' to root project 'single'")
 
         def help = events.operation("Apply plugin 'org.gradle.help-tasks'")
-        def helloWorld = events.operation("Apply plugin 'org.gradle.hello-world'")
+        def helloWorld = events.operation("Apply plugin 'org.gradle.hello-world' (0.2)")
 
         help.parent == configureRootProject
         helloWorld.parent == applyBuildGradle
