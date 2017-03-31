@@ -49,7 +49,6 @@ def buckets = [
     "4": [
         ":testKit",
         ":languageNative",
-        ":ui",
         ":ivy",
         ":wrapper",
         ":platformJvm",
