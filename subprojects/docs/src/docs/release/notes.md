@@ -189,6 +189,7 @@ The following are the newly deprecated items in this Gradle release. If you have
 
 - The `JacocoPluginExtension` methods `getLogger()`, `setLogger(Logger)` are removed.
 - The `JacocoTaskExtension` methods `getClassDumpFile()`, `setClassDumpFile(File)`, `getAgent()` and `setAgent(JacocoAgentJar)` are removed.
+- Removed the Gradle UI module. All classes for this feature have been removed as well as all leftovers supporting class from the Open API partly removed due to deprecation in Gradle 2.0.
 
 ## External contributions
 
