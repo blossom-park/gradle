@@ -20,6 +20,7 @@ import org.gradle.api.Action;
 import org.gradle.api.Nullable;
 import org.gradle.api.Plugin;
 import org.gradle.internal.operations.BuildOperationContext;
+import org.gradle.internal.progress.BuildOperationDetails;
 import org.gradle.internal.progress.BuildOperationExecutor;
 
 /**
@@ -38,7 +39,7 @@ public class BuildOperationPluginApplicator implements PluginApplicator {
     }
 
     public void applyImperative(@Nullable final String pluginId, final Plugin<?> plugin) {
-        buildOperationExecutor.run(toDisplayName(pluginId, plugin.getClass()), new Action<BuildOperationContext>() {
+        buildOperationExecutor.run(toBuildOperationDetails(pluginId, plugin.getClass(), version, "imperative"), new Action<BuildOperationContext>() {
             @Override
             public void execute(BuildOperationContext buildOperationContext) {
                 decorated.applyImperative(pluginId, plugin);
@@ -47,7 +48,7 @@ public class BuildOperationPluginApplicator implements PluginApplicator {
     }
 
     public void applyRules(@Nullable final String pluginId, final Class<?> clazz) {
-        buildOperationExecutor.run(toDisplayName(pluginId, clazz), new Action<BuildOperationContext>() {
+        buildOperationExecutor.run(toBuildOperationDetails(pluginId, clazz, version, "rules"), new Action<BuildOperationContext>() {
             @Override
             public void execute(BuildOperationContext buildOperationContext) {
                 decorated.applyRules(pluginId, clazz);
@@ -56,7 +57,7 @@ public class BuildOperationPluginApplicator implements PluginApplicator {
     }
 
     public void applyImperativeRulesHybrid(@Nullable final String pluginId, final Plugin<?> plugin) {
-        buildOperationExecutor.run(toDisplayName(pluginId, plugin.getClass()), new Action<BuildOperationContext>() {
+        buildOperationExecutor.run(toBuildOperationDetails(pluginId, plugin.getClass(), version, "hybrid"), new Action<BuildOperationContext>() {
             @Override
             public void execute(BuildOperationContext buildOperationContext) {
                 decorated.applyImperativeRulesHybrid(pluginId, plugin);
@@ -64,11 +65,35 @@ public class BuildOperationPluginApplicator implements PluginApplicator {
         });
     }
 
-    private String toDisplayName(@Nullable String pluginId, Class<?> pluginClass) {
-        if (pluginId != null) {
-            return "Apply plugin '" + pluginId + "'";
-        } else {
-            return "Apply plugin '" + pluginClass.getName() + "'";
+    private BuildOperationDetails toBuildOperationDetails(@Nullable String pluginId, Class<?> pluginClass, @Nullable String pluginVersion, String pluginKind) {
+        String identifier = pluginId != null ? pluginId : pluginClass.getName();
+        String versionString = pluginVersion == null ? "" : " (" + pluginVersion + ")";
+        ApplyPluginOperationDescriptor operationDescriptor = new ApplyPluginOperationDescriptor(identifier, pluginVersion, pluginKind);
+        return BuildOperationDetails.displayName("Apply plugin '" + identifier + "'" + versionString)
+            .name(identifier).operationDescriptor(operationDescriptor).build();
+    }
+
+    public static class ApplyPluginOperationDescriptor {
+        private String pluginId;
+        private String pluginVersion;
+        private String pluginKind;
+
+        public ApplyPluginOperationDescriptor(String pluginId, String pluginVersion, String pluginKind) {
+            this.pluginId = pluginId;
+            this.pluginVersion = pluginVersion;
+            this.pluginKind = pluginKind;
+        }
+
+        public String getPluginId() {
+            return pluginId;
+        }
+
+        public String getPluginVersion() {
+            return pluginVersion;
+        }
+
+        public String getPluginKind() {
+            return pluginKind;
         }
     }
 

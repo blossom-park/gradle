@@ -115,6 +115,7 @@ class PluginApplicationBuildProgressCrossVersionSpec extends ToolingApiSpecifica
 
         help.parent == configureRootProject
         helloWorld.parent == applyBuildGradle
+        helloWorld.descriptor.name == "org.gradle.hello-world"
     }
 
     def "generates plugin application events for plugin applied in settings script"() {
