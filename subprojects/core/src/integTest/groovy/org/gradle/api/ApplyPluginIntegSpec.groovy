@@ -20,6 +20,7 @@ import org.gradle.integtests.fixtures.AbstractIntegrationSpec
 import org.gradle.integtests.fixtures.executer.UnexpectedBuildFailure
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.util.GradleVersion
+import org.gradle.util.MustFixForV4
 import org.gradle.util.TextUtil
 import org.gradle.util.UsesNativeServices
 import spock.lang.FailsWith
@@ -116,6 +117,7 @@ class ApplyPluginIntegSpec extends AbstractIntegrationSpec {
         succeeds("test")
     }
 
+    @MustFixForV4
     def "generated Gradle API JAR in custom Gradle user home is reused across multiple invocations"() {
         requireGradleDistribution()
 
